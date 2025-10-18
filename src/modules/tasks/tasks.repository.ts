@@ -28,8 +28,13 @@ export class TaskRepository {
   }
 
   async getAllTasks(): Promise<Task[]> {
-    return this.repository.find();
-  }
+    const tasks: Task[] = await this.repository.find({
+        order: {
+          createdAt: 'DESC', 
+        },
+      });
+    return tasks;
+   }
 
   async getTasksWithFilters(
     filterDto: GetTasksFilterDto,
