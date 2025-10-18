@@ -17,10 +17,12 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { User } from '../users/user.entity';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
   
   
   @Controller('tasks')
   @UseGuards(AuthGuard())
+  @UseGuards(ThrottlerGuard)
   export class TasksController {
     constructor(private tasksService: TasksService) {}
   

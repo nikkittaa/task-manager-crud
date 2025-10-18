@@ -45,4 +45,8 @@ export class RedisService {
   async exists(key: string) {
     return (await this.redis.exists(key)) > 0;
   }
+
+  getClient(): Redis {
+    return this.redis;
+  }
 }

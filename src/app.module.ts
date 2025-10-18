@@ -7,6 +7,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import redisConfig from './config/redis.config';
 import { RedisModule } from './modules/redis/redis.module';
+import { ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+
 
 @Module({
   imports: [
@@ -36,10 +39,33 @@ import { RedisModule } from './modules/redis/redis.module';
         };
       },
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000, // 1 second
+        limit: 3, // 3 requests per second
+      },
+      {
+        name: 'medium', 
+        ttl: 10000, // 10 seconds
+        limit: 20, // 20 requests per 10 seconds
+      },
+      {
+        name: 'long',
+        ttl: 60000, // 1 minute  
+        limit: 100, // 100 requests per minute
+      }
+    ]),
     TasksModule,
     UsersModule,
     AuthModule,
     RedisModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
