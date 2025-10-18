@@ -26,7 +26,15 @@ export class UserRepository {
     return user;
   }
 
-  
+  async getUserByUsername(username: string): Promise<User> {
+    const user = await this.repository.findOne({ where: { username } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
 
   async createUser(username: string, password: string): Promise<User> {
     const salt = await bcrypt.genSalt();
@@ -48,8 +56,8 @@ export class UserRepository {
     }
   }
 
-  async validateUserPassword(id: string, password: string): Promise<boolean> {
-    const user = await this.getUserById(id);
+  async validateUserPassword(username: string, password: string): Promise<boolean> {
+    const user = await this.getUserByUsername(username);
     if (!user) {
       return false;
     }

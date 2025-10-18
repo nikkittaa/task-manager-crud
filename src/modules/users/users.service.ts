@@ -11,6 +11,10 @@ export class UsersService {
     return this.userRepository.getUserById(id);
   }
 
+  async getUserByUsername(username: string): Promise<User> {
+    return this.userRepository.getUserByUsername(username);
+  }
+
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     return this.userRepository.createUser(
@@ -19,7 +23,7 @@ export class UsersService {
     );
   }
 
-  async validateUserPassword(id: string, password: string): Promise<boolean> {
-    return this.userRepository.validateUserPassword(id, password);
+  async validateUserPassword(username: string, password: string): Promise<boolean> {
+    return this.userRepository.validateUserPassword(username, password);
   }
 }

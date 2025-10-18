@@ -15,6 +15,9 @@ export class Task {
   @Column()
   status: TaskStatus;
 
+  @Column()
+  userId: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
