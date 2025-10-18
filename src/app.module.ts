@@ -4,11 +4,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import redisConfig from './config/redis.config';
+import { RedisModule } from './modules/redis/redis.module';
 
 @Module({
   imports: [
+
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
+      isGlobal: true,
+      load: [redisConfig],
+    }),
+    CacheModule.register({
+       isGlobal: true,
+       ttl: 60*1000,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -29,6 +39,7 @@ import { AuthModule } from './modules/auth/auth.module';
     TasksModule,
     UsersModule,
     AuthModule,
+    RedisModule,
   ],
 })
 export class AppModule {}
