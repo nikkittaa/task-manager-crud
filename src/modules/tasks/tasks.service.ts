@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TaskStatus } from '../../common/enums/taskStatus.enum';
 import { Task } from './tasks.entity';
 import { TaskRepository } from './tasks.repository';
@@ -10,6 +10,8 @@ import { RedisPubSubService } from '../redis/redis-pubsub.service';
 
 @Injectable()
 export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
+
   constructor(
     private taskRepository: TaskRepository,
     private readonly redisService: RedisService,
@@ -34,12 +36,13 @@ export class TasksService {
     const cacheKey = this.getUserTasksCacheKey(user.id);
     const cachedTasks = await this.redisService.get<Task[]>(cacheKey);
     if (cachedTasks) {
-     // console.log('cache hit');
+      this.logger.log(`Cache hit for all tasks of user ${user.id}`);
       return cachedTasks;
     }
-   // console.log('cache miss');
+    this.logger.log(`Cache miss for all tasks of user ${user.id}`);
     const tasks = await this.taskRepository.getAllTasks(user);
     await this.redisService.set(cacheKey, tasks, 300 * 1000);
+    this.logger.debug(`Cached all tasks for user ${user.id}`);
     return tasks;
   }
 
@@ -52,11 +55,13 @@ export class TasksService {
 
     // Invalidate caches related to this user
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
+    this.logger.log(`Task created: ${task.id} by user ${user.id}, cache invalidated`);
 
     await this.redisPubSubService.publish('tasks_channel', {
       event: 'task_created',
       data: { id: task.id, title: task.title },
     });
+    this.logger.debug(`Published task_created event for task ${task.id}`);
 
     return task;
   }
@@ -65,11 +70,14 @@ export class TasksService {
   async getTaskById(id: string, user: User): Promise<Task> {
     const cacheKey = this.getTaskCacheKey(id);
     const cachedTask = await this.redisService.get<Task>(cacheKey);
-    if (cachedTask) return cachedTask;
-
+    if (cachedTask) {
+      this.logger.log(`Cache hit for task ${id}`);
+      return cachedTask;
+    }
+    this.logger.log(`Cache miss for task ${id}`);
     const task = await this.taskRepository.findOne(id, user);
     await this.redisService.set(cacheKey, task, 300 * 1000);
-
+    this.logger.debug(`Cached task ${id}`);
     return task;
   }
 
@@ -77,11 +85,14 @@ export class TasksService {
   async getTasksWithFilters(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
     const cacheKey = this.getFilteredTasksCacheKey(user.id, filterDto);
     const cachedTasks = await this.redisService.get<Task[]>(cacheKey);
-    if (cachedTasks) return cachedTasks;
-
+    if (cachedTasks) {
+      this.logger.log(`Cache hit for filtered tasks of user ${user.id}`);
+      return cachedTasks;
+    }
+    this.logger.log(`Cache miss for filtered tasks of user ${user.id}`);
     const tasks = await this.taskRepository.getTasksWithFilters(filterDto, user);
     await this.redisService.set(cacheKey, tasks, 300 * 1000);
-
+    this.logger.debug(`Cached filtered tasks for user ${user.id}`);
     return tasks;
   }
 
@@ -91,6 +102,7 @@ export class TasksService {
     // Invalidate caches
     await this.redisService.del(this.getTaskCacheKey(id));
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
+    this.logger.log(`Deleted task ${id} and invalidated caches for user ${user.id}`);
 
     return task;
   }
@@ -101,6 +113,7 @@ export class TasksService {
     // Invalidate caches
     await this.redisService.del(this.getTaskCacheKey(id));
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
+    this.logger.log(`Updated status of task ${id} to ${status} and invalidated caches for user ${user.id}`);
 
     return task;
   }
