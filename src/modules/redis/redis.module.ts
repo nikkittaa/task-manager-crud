@@ -4,6 +4,7 @@ import { RedisService } from './redis.service';
 import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
 import redisConfig from '../../config/redis.config';
+import { RedisPubSubService } from './redis-pubsub.service';
 
 @Global()
 @Module({
@@ -25,7 +26,9 @@ import redisConfig from '../../config/redis.config';
       },
       inject: [ConfigService],
     },
+    RedisPubSubService
+    ,
   ],
-  exports: [RedisService],
+  exports: [RedisService, RedisPubSubService],
 })
 export class RedisModule {}

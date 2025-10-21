@@ -6,12 +6,14 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { User } from '../users/user.entity';
 import { RedisService } from '../redis/redis.service';
+import { RedisPubSubService } from '../redis/redis-pubsub.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     private taskRepository: TaskRepository,
     private readonly redisService: RedisService,
+    private readonly redisPubSubService: RedisPubSubService,
   ) {}
 
   private getUserTasksCacheKey(userId: string) {
@@ -50,6 +52,11 @@ export class TasksService {
 
     // Invalidate caches related to this user
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
+
+    await this.redisPubSubService.publish('tasks_channel', {
+      event: 'task_created',
+      data: { id: task.id, title: task.title },
+    });
 
     return task;
   }
