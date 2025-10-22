@@ -27,6 +27,7 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { TaskStatus } from 'src/common/enums/taskStatus.enum';
 
 @ApiTags('Tasks')
 @ApiBearerAuth() // JWT authentication
@@ -42,7 +43,7 @@ export class TasksController {
   @ApiQuery({
     name: 'status',
     required: false,
-    enum: ['OPEN', 'IN_PROGRESS', 'DONE'],
+    enum: TaskStatus,
   })
   @ApiQuery({ name: 'search', required: false, type: String })
   getTasks(

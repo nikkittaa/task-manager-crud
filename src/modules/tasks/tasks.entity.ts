@@ -27,7 +27,7 @@ export class Task {
 
   @ApiProperty({
     example: TaskStatus.OPEN,
-    description: 'Status of the task',
+    description: 'Status of the task (0 = OPEN, 1 = IN_PROGRESS, 2 = DONE)',
     enum: TaskStatus,
     default: TaskStatus.OPEN,
   })
