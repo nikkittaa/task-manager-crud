@@ -47,7 +47,11 @@ describe('UsersController', () => {
 
   describe('createUser', () => {
     it('should create and return new user', async () => {
-      const createUserDto = { username: 'newuser', password: 'password123', email: 'newuser@example.com'  };
+      const createUserDto = {
+        username: 'newuser',
+        password: 'password123',
+        email: 'newuser@example.com',
+      };
       usersService.createUser.mockResolvedValue(mockUser);
 
       const result = await controller.createUser(createUserDto);

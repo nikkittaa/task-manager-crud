@@ -24,7 +24,7 @@ export class TaskMailerService {
 
     for (const user of users) {
       const tasks = await this.tasksService.getTasksWithFilters(
-        { status: TaskStatus.OPEN }  as GetTasksFilterDto,
+        { status: TaskStatus.OPEN } as GetTasksFilterDto,
         user,
       );
 

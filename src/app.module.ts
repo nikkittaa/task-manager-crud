@@ -7,13 +7,12 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import redisConfig from './config/redis.config';
 import { RedisModule } from './modules/redis/redis.module';
-import { ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AppService } from './app.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
-
 
 @Module({
   imports: [
@@ -21,11 +20,19 @@ import { ScheduleModule } from '@nestjs/schedule';
       transport: {
         host: 'smtp.gmail.com',
         port: 587,
-        auth: { user: process.env[`stage.${process.env.STAGE}.EMAIL_USER`], pass: process.env[`stage.${process.env.STAGE}.EMAIL_PASS`] },
+        auth: {
+          user: process.env[`stage.${process.env.STAGE}.EMAIL_USER`],
+          pass: process.env[`stage.${process.env.STAGE}.EMAIL_PASS`],
+        },
       },
-      defaults: { from: '"Task Manager" <' + process.env[`stage.${process.env.STAGE}.EMAIL_USER`] + '>' },
+      defaults: {
+        from:
+          '"Task Manager" <' +
+          process.env[`stage.${process.env.STAGE}.EMAIL_USER`] +
+          '>',
+      },
       template: {
-        dir:  __dirname + '/../src/modules/tasks/templates',
+        dir: __dirname + '/../src/modules/tasks/templates',
         adapter: new HandlebarsAdapter(),
         options: { strict: true },
       },
@@ -37,13 +44,13 @@ import { ScheduleModule } from '@nestjs/schedule';
       load: [redisConfig],
     }),
     CacheModule.register({
-       isGlobal: true,
-       ttl: 60*1000,
+      isGlobal: true,
+      ttl: 60 * 1000,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         return {
           type: 'mysql',
           host: configService.get('DB_HOST'),
@@ -63,15 +70,15 @@ import { ScheduleModule } from '@nestjs/schedule';
         limit: 3, // 3 requests per second
       },
       {
-        name: 'medium', 
+        name: 'medium',
         ttl: 10000, // 10 seconds
         limit: 20, // 20 requests per 10 seconds
       },
       {
         name: 'long',
-        ttl: 60000, // 1 minute  
+        ttl: 60000, // 1 minute
         limit: 100, // 100 requests per minute
-      }
+      },
     ]),
     TasksModule,
     UsersModule,
@@ -83,7 +90,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
-    
     },
   ],
 })

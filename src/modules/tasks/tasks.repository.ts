@@ -10,7 +10,6 @@ import { TaskStatus } from '../../common/enums/taskStatus.enum';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { User } from '../users/user.entity';
 
-
 @Injectable()
 export class TaskRepository {
   constructor(
@@ -19,7 +18,9 @@ export class TaskRepository {
   ) {}
 
   async findOne(id: string, user: User): Promise<Task> {
-    const found = await this.repository.findOne({ where: {  id, userId: user.id } });
+    const found = await this.repository.findOne({
+      where: { id, userId: user.id },
+    });
 
     if (!found) {
       throw new NotFoundException('Task not found');
@@ -30,13 +31,13 @@ export class TaskRepository {
 
   async getAllTasks(user: User): Promise<Task[]> {
     const tasks: Task[] = await this.repository.find({
-        order: {
-          createdAt: 'DESC', 
-        },
-        where: { userId: user.id },
-      });
+      order: {
+        createdAt: 'DESC',
+      },
+      where: { userId: user.id },
+    });
     return tasks;
-   }
+  }
 
   async getTasksWithFilters(
     filterDto: GetTasksFilterDto,
@@ -46,8 +47,7 @@ export class TaskRepository {
     const query = this.repository.createQueryBuilder('task');
     query.where('task.userId = :userId', { userId: user.id });
 
-
-    if (status) {
+    if (status !== undefined) {
       query.andWhere('(task.status = :status)', { status });
     }
 
@@ -71,7 +71,7 @@ export class TaskRepository {
     description: string,
     user: User,
   ): Promise<Task> {
-    const task = await this.repository.create({
+    const task = this.repository.create({
       title,
       description,
       status: TaskStatus.OPEN,
@@ -83,15 +83,16 @@ export class TaskRepository {
   }
 
   async deleteTask(id: string, user: User): Promise<Task> {
-    const found = await this.repository.findOne({ where: { id, userId: user.id } });
+    const found = await this.repository.findOne({
+      where: { id, userId: user.id },
+    });
 
     if (!found) {
       throw new NotFoundException('Task not found');
     }
 
-    await this.repository.delete({id, userId: user.id});
+    await this.repository.delete({ id, userId: user.id });
     return found;
-  
   }
 
   async updateTaskStatus(
@@ -104,4 +105,4 @@ export class TaskRepository {
     await this.repository.save(task);
     return task;
   }
-} 
+}

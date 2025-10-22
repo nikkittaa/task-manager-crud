@@ -19,6 +19,8 @@ A robust, feature-rich **Task Management REST API** built with **NestJS**, **Typ
 - 📡 **Real-time Updates** - Redis Pub/Sub for real-time notifications
 - 📚 **Swagger Documentation** - Complete API documentation with interactive UI
 - ✨ **Input Validation** - Comprehensive request validation with class-validator
+- 📧 **Email Notifications** - Automated weekly task summaries with HTML templates
+- ⏰ **Scheduled Jobs** - Cron-based task scheduling for automated operations
 - 🧪 **Comprehensive Testing**
 
 ### Security & Performance
@@ -55,6 +57,13 @@ A robust, feature-rich **Task Management REST API** built with **NestJS**, **Typ
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Husky** - Git hooks
+
+### Email & Scheduling
+
+- **@nestjs-modules/mailer** - Email service integration
+- **Nodemailer** - Email transport layer
+- **Handlebars** - HTML email templates
+- **@nestjs/schedule** - Cron job scheduling
 
 ## 📋 Prerequisites
 
@@ -101,6 +110,10 @@ REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_DB=0
 
+# Email Configuration
+EMAIL_USER=your-gmail@gmail.com
+EMAIL_PASS=your-app-password
+
 # Application
 PORT=3001
 STAGE=dev
@@ -114,7 +127,16 @@ mysql -u root -p
 CREATE DATABASE task_manager_dev;
 ```
 
-### 5. Start Services
+### 5. Email Setup (Gmail)
+
+1. **Enable 2-Factor Authentication** on your Gmail account
+2. **Generate App Password**:
+   - Go to Google Account settings
+   - Security → App passwords
+   - Generate password for "Mail"
+3. **Update environment variables** with Gmail credentials
+
+### 6. Start Services
 
 ```bash
 # Start Redis (if using local Redis)
@@ -125,7 +147,7 @@ redis-server
 # On Linux: sudo systemctl start mysql
 ```
 
-### 6. Run Application
+### 7. Run Application
 
 ```bash
 # Development mode with hot reload
@@ -139,6 +161,53 @@ npm run start:debug
 ```
 
 The API will be available at `http://localhost:3001`
+
+## 📧 Email Features
+
+### Automated Weekly Reports
+
+The application automatically sends **weekly task summaries** to users every **Monday at 8:00 AM**:
+
+- **Recipients**: All registered users with email addresses
+- **Content**: List of OPEN tasks for each user
+- **Format**: HTML email with professional styling
+- **Template**: Handlebars-based customizable templates
+
+### Email Configuration
+
+- **Provider**: Gmail SMTP (configurable)
+- **Authentication**: App passwords (secure)
+- **Templates**: Located in `src/modules/tasks/templates/`
+- **Scheduling**: Cron-based automated delivery
+
+### Customizing Email Templates
+
+Edit the Handlebars template at `src/modules/tasks/templates/weekly-tasks.hbs`:
+
+```handlebars
+<h1>Hello {{user.username}},</h1>
+<p>Here's your weekly summary of tasks that are still OPEN:</p>
+<ul>
+  {{#each tasks}}
+    <li>{{this.title}} - {{this.description}}</li>
+  {{/each}}
+</ul>
+<p>Keep up the good work!</p>
+```
+
+### Manual Email Testing
+
+```typescript
+// In TaskMailerService
+async sendTestEmail(userEmail: string) {
+  await this.mailerService.sendMail({
+    to: userEmail,
+    subject: 'Test Email',
+    template: 'weekly-tasks',
+    context: { user: { username: 'Test User' }, tasks: [] }
+  });
+}
+```
 
 ## 📚 API Documentation
 
@@ -255,6 +324,8 @@ npm test -- --testPathPatterns="auth|users|tasks"
 - **100% Core Functionality** - All modules covered
 - **Authentication Flow** - Complete auth testing
 - **Caching Logic** - Redis cache hit/miss scenarios
+- **Email Service** - Mailing functionality testing
+- **Scheduled Jobs** - Cron job execution testing
 - **Error Handling** - 401, 404, 400 responses
 - **Rate Limiting** - Throttling verification
 
@@ -293,10 +364,13 @@ src/
 │   │   ├── tasks.controller.spec.ts
 │   │   ├── tasks.service.ts
 │   │   ├── tasks.service.spec.ts
+│   │   ├── tasks-mailer.service.ts
 │   │   ├── tasks.module.ts
 │   │   ├── tasks.entity.ts
 │   │   ├── tasks.repository.ts
-│   │   └── dto/
+│   │   ├── dto/
+│   │   └── templates/
+│   │       └── weekly-tasks.hbs
 │   └── redis/             # Redis module
 │       ├── redis.service.ts
 │       ├── redis.module.ts
@@ -348,6 +422,31 @@ The application uses different configurations for different environments:
   - Medium: 20 requests/10 seconds
   - Long: 100 requests/minute
 
+## ⏰ Scheduled Jobs
+
+### Weekly Email Reports
+
+- **Schedule**: Every Monday at 8:00 AM
+- **Cron Expression**: `'00 08 * * 1'`
+- **Function**: Sends task summaries to all users
+- **Conditions**: Only sends if user has OPEN tasks
+
+### Custom Scheduled Jobs
+
+Add new scheduled jobs using NestJS Schedule:
+
+```typescript
+@Cron('0 0 * * *') // Daily at midnight
+async dailyCleanup() {
+  // Your cleanup logic here
+}
+
+@Interval(10000) // Every 10 seconds
+async healthCheck() {
+  // Health check logic
+}
+```
+
 ## 🔒 Security Features
 
 - **Password Hashing**: bcrypt with salt rounds
@@ -355,5 +454,21 @@ The application uses different configurations for different environments:
 - **Input Validation**: Comprehensive DTO validation
 - **SQL Injection Protection**: Parameterized queries via TypeORM
 - **Rate Limiting**: Multi-tier request throttling
+- **Email Security**: App passwords and secure SMTP
 
-**⚡ Built with NestJS, TypeScript, and Redis for maximum performance and scalability.**
+## 🚀 Key Features Summary
+
+| Feature                    | Description               | Technology              |
+| -------------------------- | ------------------------- | ----------------------- |
+| 📝 **Task Management**     | Complete CRUD operations  | NestJS + TypeORM        |
+| 🔐 **Authentication**      | JWT-based secure auth     | Passport + JWT          |
+| 🚀 **Caching**             | High-performance caching  | Redis                   |
+| 📧 **Email Notifications** | Automated weekly reports  | Nodemailer + Handlebars |
+| ⏰ **Scheduled Jobs**      | Cron-based automation     | @nestjs/schedule        |
+| 🛡️ **Rate Limiting**       | Multi-tier protection     | @nestjs/throttler       |
+| 📚 **API Docs**            | Interactive documentation | Swagger                 |
+| 🧪 **Testing**             | Comprehensive test suite  | Jest                    |
+
+---
+
+**⚡ Built with NestJS, TypeScript, Redis, and automated email notifications for maximum performance and user engagement.**

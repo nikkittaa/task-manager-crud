@@ -18,7 +18,6 @@ export class UsersService {
     return this.userRepository.getUserByUsername(username);
   }
 
-
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     return this.userRepository.createUser(
       createUserDto.username,
@@ -27,7 +26,10 @@ export class UsersService {
     );
   }
 
-  async validateUserPassword(username: string, password: string): Promise<boolean> {
+  async validateUserPassword(
+    username: string,
+    password: string,
+  ): Promise<boolean> {
     return this.userRepository.validateUserPassword(username, password);
   }
 }

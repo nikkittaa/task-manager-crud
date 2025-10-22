@@ -36,9 +36,11 @@ import { TaskMailerService } from './tasks-mailer.service';
 @UseGuards(AuthGuard())
 @UseGuards(ThrottlerGuard)
 export class TasksController {
-  constructor(private tasksService: TasksService,
-    private readonly taskMailerService: TaskMailerService) {}
-  
+  constructor(
+    private tasksService: TasksService,
+    private readonly taskMailerService: TaskMailerService,
+  ) {}
+
   @Get()
   @ApiOperation({ summary: 'Get all tasks or filtered tasks' })
   @ApiResponse({ status: 200, description: 'List of tasks', type: [Task] })

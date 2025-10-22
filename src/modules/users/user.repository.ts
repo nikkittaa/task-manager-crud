@@ -40,7 +40,11 @@ export class UserRepository {
     return this.repository.find();
   }
 
-  async createUser(username: string, password: string, email: string): Promise<User> {
+  async createUser(
+    username: string,
+    password: string,
+    email: string,
+  ): Promise<User> {
     const salt = await bcrypt.genSalt();
     const encryptedPassword = await bcrypt.hash(password, salt);
     const user = this.repository.create({
@@ -52,22 +56,28 @@ export class UserRepository {
     try {
       const result = await this.repository.save(user);
       return result;
-    } 
-      catch (err: unknown) {
-        const code = (err as any)?.code; 
-        if (code === 'ER_DUP_ENTRY') {
-          throw new ConflictException('Username already exists');
-        }
-        throw new InternalServerErrorException('Something went wrong!!!!');
+    } catch (err: unknown) {
+      // Use a type guard
+      if (this.isQueryFailedError(err) && err.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('Username already exists');
       }
-    
+
+      throw new InternalServerErrorException('Something went wrong!!!!');
+    }
   }
 
-  async validateUserPassword(username: string, password: string): Promise<boolean> {
+  async validateUserPassword(
+    username: string,
+    password: string,
+  ): Promise<boolean> {
     const user = await this.getUserByUsername(username);
     if (!user) {
       return false;
     }
     return bcrypt.compare(password, user.password);
+  }
+
+  private isQueryFailedError(err: unknown): err is { code?: string } {
+    return typeof err === 'object' && err !== null && 'code' in err;
   }
 }

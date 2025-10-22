@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { RedisConfig } from 'src/common/interfaces/redis-config.interface';
 
 @Injectable()
 export class RedisPubSubService implements OnModuleDestroy {
@@ -8,19 +9,19 @@ export class RedisPubSubService implements OnModuleDestroy {
   private subscriber: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    const redisConfig = this.configService.get('redis');
+    const redisConfig = this.configService.get<RedisConfig>('redis');
     this.publisher = new Redis({
-      host: redisConfig.host,
-      port: redisConfig.port,
-      password: redisConfig.password,
-      db: redisConfig.db,
+      host: redisConfig?.host,
+      port: redisConfig?.port,
+      password: redisConfig?.password,
+      db: redisConfig?.db,
     });
 
     this.subscriber = new Redis({
-      host: redisConfig.host,
-      port: redisConfig.port,
-      password: redisConfig.password,
-      db: redisConfig.db,
+      host: redisConfig?.host,
+      port: redisConfig?.port,
+      password: redisConfig?.password,
+      db: redisConfig?.db,
     });
   }
 

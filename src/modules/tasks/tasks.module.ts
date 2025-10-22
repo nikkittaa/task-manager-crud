@@ -9,7 +9,12 @@ import { TaskMailerService } from './tasks-mailer.service';
 import { UsersModule } from '../users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 @Module({
-  imports: [TypeOrmModule.forFeature([Task]), AuthModule, UsersModule, MailerModule],
+  imports: [
+    TypeOrmModule.forFeature([Task]),
+    AuthModule,
+    UsersModule,
+    MailerModule,
+  ],
   controllers: [TasksController],
   providers: [TasksService, TaskRepository, TaskMailerService],
 })

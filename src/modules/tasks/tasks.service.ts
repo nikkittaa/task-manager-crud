@@ -26,9 +26,12 @@ export class TasksService {
     return `task:${taskId}`;
   }
 
-  private getFilteredTasksCacheKey(userId: string, filterDto: GetTasksFilterDto) {
+  private getFilteredTasksCacheKey(
+    userId: string,
+    filterDto: GetTasksFilterDto,
+  ) {
     const { status, search } = filterDto;
-    return `user-tasks:${userId}:status:${status || 'all'}:search:${search || 'none'}`;
+    return `user-tasks:${userId}:status:${status !== undefined ? status : 'none'}:search:${search !== undefined ? search : 'none'}`;
   }
 
   // Fetch all tasks with caching
@@ -55,7 +58,9 @@ export class TasksService {
 
     // Invalidate caches related to this user
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
-    this.logger.log(`Task created: ${task.id} by user ${user.id}, cache invalidated`);
+    this.logger.log(
+      `Task created: ${task.id} by user ${user.id}, cache invalidated`,
+    );
 
     await this.redisPubSubService.publish('tasks_channel', {
       event: 'task_created',
@@ -82,7 +87,10 @@ export class TasksService {
   }
 
   // Cache filtered tasks
-  async getTasksWithFilters(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+  async getTasksWithFilters(
+    filterDto: GetTasksFilterDto,
+    user: User,
+  ): Promise<Task[]> {
     const cacheKey = this.getFilteredTasksCacheKey(user.id, filterDto);
     const cachedTasks = await this.redisService.get<Task[]>(cacheKey);
     if (cachedTasks) {
@@ -90,7 +98,10 @@ export class TasksService {
       return cachedTasks;
     }
     this.logger.log(`Cache miss for filtered tasks of user ${user.id}`);
-    const tasks = await this.taskRepository.getTasksWithFilters(filterDto, user);
+    const tasks = await this.taskRepository.getTasksWithFilters(
+      filterDto,
+      user,
+    );
     await this.redisService.set(cacheKey, tasks, 300 * 1000);
     this.logger.debug(`Cached filtered tasks for user ${user.id}`);
     return tasks;
@@ -102,18 +113,26 @@ export class TasksService {
     // Invalidate caches
     await this.redisService.del(this.getTaskCacheKey(id));
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
-    this.logger.log(`Deleted task ${id} and invalidated caches for user ${user.id}`);
+    this.logger.log(
+      `Deleted task ${id} and invalidated caches for user ${user.id}`,
+    );
 
     return task;
   }
 
-  async updateTaskStatus(id: string, user: User, status: TaskStatus): Promise<Task> {
+  async updateTaskStatus(
+    id: string,
+    user: User,
+    status: TaskStatus,
+  ): Promise<Task> {
     const task = await this.taskRepository.updateTaskStatus(id, user, status);
 
     // Invalidate caches
     await this.redisService.del(this.getTaskCacheKey(id));
     await this.redisService.delPattern(`user-tasks:${user.id}*`);
-    this.logger.log(`Updated status of task ${id} to ${status} and invalidated caches for user ${user.id}`);
+    this.logger.log(
+      `Updated status of task ${id} to ${status} and invalidated caches for user ${user.id}`,
+    );
 
     return task;
   }

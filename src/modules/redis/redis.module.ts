@@ -5,6 +5,7 @@ import Keyv from 'keyv';
 import KeyvRedis from '@keyv/redis';
 import redisConfig from '../../config/redis.config';
 import { RedisPubSubService } from './redis-pubsub.service';
+import { RedisConfig } from 'src/common/interfaces/redis-config.interface';
 
 @Global()
 @Module({
@@ -14,20 +15,19 @@ import { RedisPubSubService } from './redis-pubsub.service';
     {
       provide: 'KEYV_REDIS',
       useFactory: (configService: ConfigService) => {
-        const redis = configService.get('redis') as any;
+        const redis = configService.get<RedisConfig>('redis');
         const keyv = new Keyv({
           store: new KeyvRedis(
-            `redis://${redis.password ? `:${redis.password}@` : ''}${redis.host}:${redis.port}/${redis.db}`
+            `redis://${redis?.password ? `:${redis?.password}@` : ''}${redis?.host}:${redis?.port}/${redis?.db}`,
           ),
-          ttl: redis.ttl * 1000, // TTL in milliseconds
-          namespace: redis.keyPrefix,
+          ttl: redis?.ttl ? redis?.ttl * 1000 : 300000, // TTL in milliseconds
+          namespace: redis?.keyPrefix,
         });
         return keyv;
       },
       inject: [ConfigService],
     },
-    RedisPubSubService
-    ,
+    RedisPubSubService,
   ],
   exports: [RedisService, RedisPubSubService],
 })

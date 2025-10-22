@@ -1,6 +1,7 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { TaskStatus } from '../../../common/enums/taskStatus.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class GetTasksFilterDto {
   @IsOptional()
@@ -9,6 +10,7 @@ export class GetTasksFilterDto {
     description: 'Status of the task (0 = OPEN, 1 = IN_PROGRESS, 2 = DONE)',
     enum: TaskStatus,
   })
+  @Type(() => Number)
   @IsEnum(TaskStatus)
   status?: TaskStatus;
 
