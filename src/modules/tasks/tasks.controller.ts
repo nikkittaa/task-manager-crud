@@ -18,7 +18,18 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../../common/decorators/get-user.decorator';
 import { User } from '../users/user.entity';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('Tasks')
+@ApiBearerAuth() // JWT authentication
 @Controller('tasks')
 @UseGuards(AuthGuard())
 @UseGuards(ThrottlerGuard)
@@ -26,6 +37,14 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all tasks or filtered tasks' })
+  @ApiResponse({ status: 200, description: 'List of tasks', type: [Task] })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['OPEN', 'IN_PROGRESS', 'DONE'],
+  })
+  @ApiQuery({ name: 'search', required: false, type: String })
   getTasks(
     @Query() filterDto: GetTasksFilterDto,
     @GetUser() user: User,
@@ -38,11 +57,17 @@ export class TasksController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: 'Get a task by ID' })
+  @ApiResponse({ status: 200, description: 'The task', type: Task })
+  @ApiParam({ name: 'id', description: 'Task ID' })
   getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
     return this.tasksService.getTaskById(id, user);
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new task' })
+  @ApiBody({ type: CreateTaskDto })
+  @ApiResponse({ status: 201, description: 'The created task', type: Task })
   createTask(
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
@@ -51,6 +76,9 @@ export class TasksController {
   }
 
   @Delete('/:id')
+  @ApiOperation({ summary: 'Delete a task by ID' })
+  @ApiResponse({ status: 200, description: 'Deleted task', type: Task })
+  @ApiParam({ name: 'id', description: 'Task ID' })
   deleteTaskById(
     @Param('id') id: string,
     @GetUser() user: User,
@@ -59,6 +87,10 @@ export class TasksController {
   }
 
   @Patch('/:id/status')
+  @ApiOperation({ summary: 'Update task status' })
+  @ApiBody({ type: UpdateTaskStatusDto })
+  @ApiResponse({ status: 200, description: 'Updated task', type: Task })
+  @ApiParam({ name: 'id', description: 'Task ID' })
   updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
