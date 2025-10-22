@@ -267,27 +267,32 @@ src/
 ├── common/                    # Shared utilities
 │   ├── decorators/           # Custom decorators
 │   ├── enums/               # Application enums
-│   ├── guards/              # Custom guards
 │   └── interfaces/          # TypeScript interfaces
 ├── config/                   # Configuration files
 │   └── redis.config.ts      # Redis configuration
 ├── modules/                 # Feature modules
 │   ├── auth/               # Authentication module
 │   │   ├── auth.controller.ts
+│   │   ├── auth.controller.spec.ts
 │   │   ├── auth.service.ts
+│   │   ├── auth.service.spec.ts
 │   │   ├── auth.module.ts
 │   │   ├── dto/           # Data Transfer Objects
 │   │   └── strategies/    # Passport strategies
 │   ├── users/             # User management module
 │   │   ├── users.controller.ts
+│   │   ├── users.controller.spec.ts
 │   │   ├── users.service.ts
+│   │   ├── users.service.spec.ts
 │   │   ├── users.module.ts
 │   │   ├── user.entity.ts
 │   │   ├── user.repository.ts
 │   │   └── dto/
 │   ├── tasks/             # Task management module
 │   │   ├── tasks.controller.ts
+│   │   ├── tasks.controller.spec.ts
 │   │   ├── tasks.service.ts
+│   │   ├── tasks.service.spec.ts
 │   │   ├── tasks.module.ts
 │   │   ├── tasks.entity.ts
 │   │   ├── tasks.repository.ts
@@ -296,9 +301,6 @@ src/
 │       ├── redis.service.ts
 │       ├── redis.module.ts
 │       └── redis-pubsub.service.ts
-└── test/                   # Test files
-    ├── *.spec.ts          # Unit tests
-    └── *.e2e-spec.ts      # E2E tests
 ```
 
 ## 🔧 Development
@@ -322,7 +324,6 @@ Pre-commit hooks automatically run:
 
 - ESLint for code quality
 - Prettier for formatting
-- Tests for functionality
 
 ### Environment Variables
 
