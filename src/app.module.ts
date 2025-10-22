@@ -10,11 +10,27 @@ import { RedisModule } from './modules/redis/redis.module';
 import { ThrottlerGuard, ThrottlerModule} from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { AppService } from './app.service';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
   imports: [
-
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        auth: { user: process.env[`stage.${process.env.STAGE}.EMAIL_USER`], pass: process.env[`stage.${process.env.STAGE}.EMAIL_PASS`] },
+      },
+      defaults: { from: '"Task Manager" <' + process.env[`stage.${process.env.STAGE}.EMAIL_USER`] + '>' },
+      template: {
+        dir:  __dirname + '/../src/modules/tasks/templates',
+        adapter: new HandlebarsAdapter(),
+        options: { strict: true },
+      },
+    }),
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
       isGlobal: true,

@@ -36,24 +36,31 @@ export class UserRepository {
     return user;
   }
 
-  async createUser(username: string, password: string): Promise<User> {
+  async getAllUsers(): Promise<User[]> {
+    return this.repository.find();
+  }
+
+  async createUser(username: string, password: string, email: string): Promise<User> {
     const salt = await bcrypt.genSalt();
     const encryptedPassword = await bcrypt.hash(password, salt);
-    const user = await this.repository.create({
+    const user = this.repository.create({
       username,
       password: encryptedPassword,
+      email: email,
     });
 
     try {
       const result = await this.repository.save(user);
       return result;
-    } catch (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('Username already exists');
-      } else {
+    } 
+      catch (err: unknown) {
+        const code = (err as any)?.code; 
+        if (code === 'ER_DUP_ENTRY') {
+          throw new ConflictException('Username already exists');
+        }
         throw new InternalServerErrorException('Something went wrong!!!!');
       }
-    }
+    
   }
 
   async validateUserPassword(username: string, password: string): Promise<boolean> {

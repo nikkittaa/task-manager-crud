@@ -32,6 +32,13 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
+  @Get()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, description: 'The found users', type: [User] })
+  getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })

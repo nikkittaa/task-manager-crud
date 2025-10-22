@@ -1,0 +1,8 @@
+<h1>Hello {{user.username}},</h1>
+<p>Here’s your weekly summary of tasks that are still OPEN:</p>
+<ul>
+  {{#each tasks}}
+    <li>{{this.title}} - {{this.description}}</li>
+  {{/each}}
+</ul>
+<p>Keep up the good work!</p>

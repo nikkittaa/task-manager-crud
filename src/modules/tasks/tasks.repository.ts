@@ -44,6 +44,7 @@ export class TaskRepository {
   ): Promise<Task[]> {
     const { status, search } = filterDto;
     const query = this.repository.createQueryBuilder('task');
+    query.where('task.userId = :userId', { userId: user.id });
 
 
     if (status) {
@@ -60,7 +61,7 @@ export class TaskRepository {
     try {
       const tasks = await query.getMany();
       return tasks;
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }

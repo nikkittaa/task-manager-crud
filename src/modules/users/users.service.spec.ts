@@ -60,7 +60,7 @@ describe('UsersService', () => {
 
   describe('createUser', () => {
     it('should create and return new user', async () => {
-      const createUserDto = { username: 'newuser', password: 'password123' };
+      const createUserDto = { username: 'newuser', password: 'password123', email: 'newuser@example.com' };
       userRepository.createUser.mockResolvedValue(mockUser);
 
       const result = await service.createUser(createUserDto);
@@ -69,6 +69,7 @@ describe('UsersService', () => {
       expect(userRepository.createUser).toHaveBeenCalledWith(
         'newuser',
         'password123',
+        'newuser@example.com',
       );
     });
   });

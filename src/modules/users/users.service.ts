@@ -10,6 +10,9 @@ export class UsersService {
   async getUserById(id: string): Promise<User> {
     return this.userRepository.getUserById(id);
   }
+  async getAllUsers(): Promise<User[]> {
+    return this.userRepository.getAllUsers();
+  }
 
   async getUserByUsername(username: string): Promise<User> {
     return this.userRepository.getUserByUsername(username);
@@ -20,6 +23,7 @@ export class UsersService {
     return this.userRepository.createUser(
       createUserDto.username,
       createUserDto.password,
+      createUserDto.email,
     );
   }
 

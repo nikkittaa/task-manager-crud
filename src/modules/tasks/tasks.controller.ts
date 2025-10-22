@@ -28,6 +28,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { TaskStatus } from 'src/common/enums/taskStatus.enum';
+import { TaskMailerService } from './tasks-mailer.service';
 
 @ApiTags('Tasks')
 @ApiBearerAuth() // JWT authentication
@@ -35,8 +36,9 @@ import { TaskStatus } from 'src/common/enums/taskStatus.enum';
 @UseGuards(AuthGuard())
 @UseGuards(ThrottlerGuard)
 export class TasksController {
-  constructor(private tasksService: TasksService) {}
-
+  constructor(private tasksService: TasksService,
+    private readonly taskMailerService: TaskMailerService) {}
+  
   @Get()
   @ApiOperation({ summary: 'Get all tasks or filtered tasks' })
   @ApiResponse({ status: 200, description: 'List of tasks', type: [Task] })

@@ -23,6 +23,10 @@ export class User {
   @Column()
   password: string;
 
+  @ApiProperty({ example: 'testuser@example.com', description: 'Email' })
+  @Column()
+  email: string;
+
   @ApiProperty({
     example: '2021-01-01T00:00:00.000Z',
     description: 'Creation date',
