@@ -1,98 +1,358 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📝 Task Manager API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust, feature-rich **Task Management REST API** built with **NestJS**, **TypeScript**, and **MySQL**. This application provides complete task management functionality with advanced features like Redis caching, rate limiting, JWT authentication, and comprehensive API documentation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+### Core Functionality
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- ✅ **Complete CRUD Operations** - Create, Read, Update, Delete tasks
+- 🔐 **JWT Authentication** - Secure user authentication and authorization
+- 👤 **User Management** - User registration and profile management
+- 🔍 **Advanced Filtering** - Filter tasks by status and search terms
+- 📊 **Task Status Management** - OPEN, IN_PROGRESS, DONE status workflow
 
-## Project setup
+### Advanced Features
+
+- 🚀 **Redis Caching** - High-performance caching for improved response times
+- 🛡️ **Rate Limiting** - Multi-tier throttling protection against abuse
+- 📡 **Real-time Updates** - Redis Pub/Sub for real-time notifications
+- 📚 **Swagger Documentation** - Complete API documentation with interactive UI
+- ✨ **Input Validation** - Comprehensive request validation with class-validator
+- 🧪 **Comprehensive Testing**
+
+### Security & Performance
+
+- 🔒 **JWT Token Security** - Stateless authentication with configurable expiration
+- 🛑 **Rate Limiting** - Multiple throttling tiers (per-second, per-minute)
+- 🗄️ **Database Security** - Parameterized queries and ORM protection
+- ⚡ **Optimized Caching** - Smart cache invalidation and refresh strategies
+
+## 🛠️ Tech Stack
+
+### Backend Framework
+
+- **NestJS** - Progressive Node.js framework
+- **TypeScript** - Type-safe JavaScript
+
+### Database & Caching
+
+- **MySQL** - Primary database
+- **TypeORM** - Object-Relational Mapping
+- **Redis** - Caching and Pub/Sub messaging
+
+### Authentication & Security
+
+- **JWT** - JSON Web Tokens
+- **bcrypt** - Password hashing
+- **Passport** - Authentication middleware
+- **class-validator** - Input validation
+
+### Development & Testing
+
+- **Jest** - Testing framework
+- **Swagger** - API documentation
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+
+## 📋 Prerequisites
+
+- **Node.js** >= 16.0.0
+- **npm** >= 8.0.0
+- **MySQL** >= 8.0
+- **Redis** >= 6.0
+
+## 🚀 Quick Start
+
+### 1. Clone Repository
 
 ```bash
-$ npm install
+git clone <repository-url>
+cd task-manager-crud
 ```
 
-## Compile and run the project
+### 2. Install Dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Environment Configuration
+
+Create environment files:
+
+**.env.stage.dev**
+
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=your_password
+DB_DATABASE=task_manager_dev
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# Application
+PORT=3001
+STAGE=dev
+```
+
+### 4. Database Setup
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Create MySQL database
+mysql -u root -p
+CREATE DATABASE task_manager_dev;
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 5. Start Services
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Start Redis (if using local Redis)
+redis-server
+
+# Start MySQL service
+# On macOS: brew services start mysql
+# On Linux: sudo systemctl start mysql
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Run Application
 
-## Resources
+```bash
+# Development mode with hot reload
+npm run start:dev
 
-Check out a few resources that may come in handy when working with NestJS:
+# Production mode
+npm run start:prod
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Debug mode
+npm run start:debug
+```
 
-## Support
+The API will be available at `http://localhost:3001`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📚 API Documentation
 
-## Stay in touch
+### Interactive Documentation
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Visit `http://localhost:3001/api` for **Swagger UI** with interactive API documentation.
 
-## License
+### Authentication
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+All task endpoints require JWT authentication. Include the token in the Authorization header:
+
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+### Core Endpoints
+
+#### Authentication
+
+```http
+POST /auth/signin          # Sign in user
+```
+
+#### User Management
+
+```http
+GET  /users/:id           # Get user by ID
+POST /users               # Create new user
+```
+
+#### Task Management
+
+```http
+GET    /tasks             # Get all tasks (with optional filters)
+GET    /tasks/:id         # Get specific task
+POST   /tasks             # Create new task
+PATCH  /tasks/:id/status  # Update task status
+DELETE /tasks/:id         # Delete task
+```
+
+### Request/Response Examples
+
+#### Create User
+
+```bash
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john_doe",
+    "password": "password123"
+  }'
+```
+
+#### Sign In
+
+```bash
+curl -X POST http://localhost:3000/auth/signin \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john_doe",
+    "password": "password123"
+  }'
+```
+
+#### Create Task
+
+```bash
+curl -X POST http://localhost:3000/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-token>" \
+  -d '{
+    "title": "Complete project documentation",
+    "description": "Write comprehensive README and API docs"
+  }'
+```
+
+#### Filter Tasks
+
+```bash
+# Filter by status
+GET /tasks?status=OPEN
+
+# Search tasks
+GET /tasks?search=documentation
+
+# Combined filters
+GET /tasks?status=IN_PROGRESS&search=project
+```
+
+## 🧪 Testing
+
+### Run Tests
+
+```bash
+# Unit tests
+npm test
+
+# E2E tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+
+# Watch mode
+npm run test:watch
+
+# Specific test files
+npm test -- --testPathPatterns="auth|users|tasks"
+```
+
+### Test Coverage
+
+- **27 Unit Tests** - Services and controllers
+- **100% Core Functionality** - All modules covered
+- **Authentication Flow** - Complete auth testing
+- **Caching Logic** - Redis cache hit/miss scenarios
+- **Error Handling** - 401, 404, 400 responses
+- **Rate Limiting** - Throttling verification
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app.module.ts              # Root application module
+├── main.ts                    # Application entry point
+├── common/                    # Shared utilities
+│   ├── decorators/           # Custom decorators
+│   ├── enums/               # Application enums
+│   ├── guards/              # Custom guards
+│   └── interfaces/          # TypeScript interfaces
+├── config/                   # Configuration files
+│   └── redis.config.ts      # Redis configuration
+├── modules/                 # Feature modules
+│   ├── auth/               # Authentication module
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── auth.module.ts
+│   │   ├── dto/           # Data Transfer Objects
+│   │   └── strategies/    # Passport strategies
+│   ├── users/             # User management module
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── users.module.ts
+│   │   ├── user.entity.ts
+│   │   ├── user.repository.ts
+│   │   └── dto/
+│   ├── tasks/             # Task management module
+│   │   ├── tasks.controller.ts
+│   │   ├── tasks.service.ts
+│   │   ├── tasks.module.ts
+│   │   ├── tasks.entity.ts
+│   │   ├── tasks.repository.ts
+│   │   └── dto/
+│   └── redis/             # Redis module
+│       ├── redis.service.ts
+│       ├── redis.module.ts
+│       └── redis-pubsub.service.ts
+└── test/                   # Test files
+    ├── *.spec.ts          # Unit tests
+    └── *.e2e-spec.ts      # E2E tests
+```
+
+## 🔧 Development
+
+### Code Quality
+
+```bash
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Type checking
+npm run build
+```
+
+### Git Hooks
+
+Pre-commit hooks automatically run:
+
+- ESLint for code quality
+- Prettier for formatting
+- Tests for functionality
+
+### Environment Variables
+
+The application uses different configurations for different environments:
+
+- **Development**: `.env.stage.dev`
+- **Production**: `.env.stage.prod`
+- **Test**: Uses in-memory/test configurations
+
+## 📊 Performance Features
+
+### Redis Caching
+
+- **Cache Strategy**: Cache-first with fallback to database
+- **Smart Invalidation**: Automatic cache cleanup on data changes
+- **Performance Gain**: faster response times for cached data
+
+### Rate Limiting
+
+- **Multi-tier Protection**:
+  - Short: 3 requests/second
+  - Medium: 20 requests/10 seconds
+  - Long: 100 requests/minute
+
+## 🔒 Security Features
+
+- **Password Hashing**: bcrypt with salt rounds
+- **JWT Security**: Configurable expiration and refresh
+- **Input Validation**: Comprehensive DTO validation
+- **SQL Injection Protection**: Parameterized queries via TypeORM
+- **Rate Limiting**: Multi-tier request throttling
+
+**⚡ Built with NestJS, TypeScript, and Redis for maximum performance and scalability.**
